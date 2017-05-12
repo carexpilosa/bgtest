@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+  <head>
+    <title>TODO supply a title</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/backgrid.css" rel="stylesheet" type="text/css"/>
+    
+    <script src="js/lib/jquery-3.2.1.js" type="text/javascript"></script>
+    <script src="js/lib/underscore.js" type="text/javascript"></script>
+    <script src="js/lib/backbone.js" type="text/javascript"></script>
+    <script src="js/lib/backgrid.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      function init() {
+        var Territory = Backbone.Model.extend({});
+
+        var Territories = Backbone.Collection.extend({
+          model: Territory,
+          url: "http://backgridjs.com/examples/territories.json"
+        });
+
+        var territories = new Territories();
+        //console.log(territories.models);
+        // Fetch some countries from the url
+        territories.fetch().done(function(data) {
+          territories.models.forEach(function (val, idx) {
+            console.log(val.attributes.name);
+            //for (attr in val.attributes) {
+            //  console.log(attr + ' => ' + val.attributes[attr]);
+            //}
+          });
+        });
+        
+        // Column definitions
+        var columns = [{
+          name: "id", // The key of the model attribute
+          label: "ID", // The name to display in the header
+          editable: false, // By default every cell in a column is editable, but *ID* shouldn't be
+          // Defines a cell type, and ID is displayed as an integer without the ',' separating 1000s.
+          cell: Backgrid.IntegerCell.extend({
+            orderSeparator: ''
+          })
+        }, {
+          name: "name",
+          label: "Name",
+          // The cell type can be a reference of a Backgrid.Cell subclass, any Backgrid.Cell subclass instances like *id* above, or a string
+          cell: "string" // This is converted to "StringCell" and a corresponding class in the Backgrid package namespace is looked up
+        }, {
+          name: "pop",
+          label: "Bevölkerung",
+          cell: "integer" // An integer cell is a number cell that displays humanized integers
+        }, {
+          name: "percentage",
+          label: "% der Weltbevölkerung",
+          cell: "number" // A cell type for floating point value, defaults to have a precision 2 decimal numbers
+        }, {
+          name: "date",
+          label: "Datum",
+          cell: "date",
+        }, {
+          name: "url",
+          label: "URL",
+          cell: "uri" // Renders the value in an HTML <a> element
+        }];
+
+        // Initialize a new Grid instance
+        var grid = new Backgrid.Grid({
+          columns: columns,
+          collection: territories
+        });
+        // Render the grid and attach the Grid's root to your HTML document
+        $("#example").append(grid.render().el);
+      }
+      
+      $(document).ready(function () {
+        init();
+      });
+    </script>
+</head>
+  <body>
+    <div id="example"></div>
+  </body>
+</html>
